@@ -6,9 +6,7 @@
 <title>Text Share</title>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -90,11 +88,6 @@ body{
   font-size:17px;
   font-weight:700;
   cursor:pointer;
-  transition:.15s;
-}
-
-.copy-btn:hover{
-  opacity:.9;
 }
 
 .copy-btn:active{
@@ -167,11 +160,6 @@ textarea{
   margin-top:7px;
 }
 
-textarea:focus,
-input:focus{
-  border-color:#151b27;
-}
-
 .row{
   display:flex;
   gap:10px;
@@ -229,20 +217,16 @@ input:focus{
   class="owner-btn"
   id="ownerBtn"
   title="Đăng nhập chủ"
->
-🔧
-</button>
+>🔧</button>
 
 <main id="app">
 
 <section class="card">
 
 <div id="textArea">
-
-<div class="empty">
-Đang tải văn bản...
-</div>
-
+  <div class="empty">
+    Đang tải văn bản...
+  </div>
 </div>
 
 </section>
@@ -251,22 +235,14 @@ input:focus{
 
 
 <!-- =========================
-     ĐĂNG NHẬP CHỦ
+     LOGIN
 ========================= -->
 
-<div
-  class="modal-back"
-  id="loginModal"
->
+<div class="modal-back" id="loginModal">
 
 <div class="modal">
 
-<button
-  class="close"
-  data-close="loginModal"
->
-×
-</button>
+<button class="close" data-close="loginModal">×</button>
 
 <h2>Đăng nhập chủ</h2>
 
@@ -301,27 +277,18 @@ input:focus{
 ></div>
 
 </div>
-
 </div>
 
 
 <!-- =========================
-     QUẢN LÝ
+     ADMIN
 ========================= -->
 
-<div
-  class="modal-back"
-  id="adminModal"
->
+<div class="modal-back" id="adminModal">
 
 <div class="modal">
 
-<button
-  class="close"
-  data-close="adminModal"
->
-×
-</button>
+<button class="close" data-close="adminModal">×</button>
 
 <h2>Quản lý văn bản</h2>
 
@@ -374,14 +341,13 @@ input:focus{
 ></div>
 
 </div>
-
 </div>
 
 
 <script type="module">
 
 /* ==========================================
-   FIREBASE SDK
+   FIREBASE
 ========================================== */
 
 import {
@@ -392,6 +358,8 @@ from
 
 import {
   getAuth,
+  setPersistence,
+  browserSessionPersistence,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
@@ -412,7 +380,6 @@ from
 
 /* ==========================================
    FIREBASE CONFIG
-   PROJECT: quan-ly-lop-53dab
 ========================================== */
 
 const firebaseConfig = {
@@ -442,7 +409,7 @@ const firebaseConfig = {
 
 
 /* ==========================================
-   KHỞI TẠO FIREBASE
+   KHỞI TẠO
 ========================================== */
 
 const app =
@@ -455,8 +422,19 @@ const db =
   getFirestore(app);
 
 
+/*
+  QUAN TRỌNG:
+  Mỗi tab dùng một phiên đăng nhập riêng.
+*/
+
+await setPersistence(
+  auth,
+  browserSessionPersistence
+);
+
+
 /* ==========================================
-   FIRESTORE DOCUMENT
+   FIRESTORE
 ========================================== */
 
 const textDoc =
@@ -476,23 +454,17 @@ let current = null;
 const $ =
   id => document.getElementById(id);
 
-
 function show(id){
-
   $(id).classList.add("show");
-
 }
 
-
 function hide(id){
-
   $(id).classList.remove("show");
-
 }
 
 
 /* ==========================================
-   ĐÓNG CỬA SỔ
+   ĐÓNG MODAL
 ========================================== */
 
 document
@@ -517,24 +489,24 @@ document
 function escapeHtml(text){
 
   return String(text)
-  .replace(
-    /[&<>"']/g,
-    char => ({
+    .replace(
+      /[&<>"']/g,
+      char => ({
 
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
 
-    }[char])
-  );
+      }[char])
+    );
 
 }
 
 
 /* ==========================================
-   ĐẾM KÝ TỰ
+   COUNTER
 ========================================== */
 
 function updateCounter(){
@@ -547,7 +519,7 @@ function updateCounter(){
 
 
 /* ==========================================
-   HIỂN THỊ VĂN BẢN CHO KHÁCH
+   HIỂN THỊ
 ========================================== */
 
 function render(){
@@ -601,10 +573,6 @@ function render(){
   `;
 
 
-  /* ========================================
-     COPY
-  ======================================== */
-
   $("copyBtn").onclick =
   async () => {
 
@@ -651,8 +619,12 @@ function render(){
 
     setTimeout(() => {
 
-      $("copyBtn").textContent =
-        "📋 Copy văn bản";
+      if($("copyBtn")){
+
+        $("copyBtn").textContent =
+          "📋 Copy văn bản";
+
+      }
 
     },1500);
 
@@ -662,7 +634,7 @@ function render(){
 
 
 /* ==========================================
-   TẢI VĂN BẢN TỪ FIRESTORE
+   LOAD FIRESTORE
 ========================================== */
 
 async function loadText(){
@@ -691,8 +663,7 @@ async function loadText(){
 
     }else{
 
-      current =
-        null;
+      current = null;
 
     }
 
@@ -702,7 +673,7 @@ async function loadText(){
   }catch(error){
 
     console.error(
-      "Firestore:",
+      "Firestore error:",
       error
     );
 
@@ -730,28 +701,42 @@ async function loadText(){
 
 
 /* ==========================================
-   NÚT QUẢN TRỊ
+   NÚT CHỦ
 ========================================== */
 
 $("ownerBtn").onclick = () => {
 
+  /*
+    Chỉ kiểm tra phiên của TAB hiện tại.
+  */
+
   if(auth.currentUser){
 
     $("textTitle").value =
-      current?.title ||
-      "";
+      current?.title || "";
 
     $("textInput").value =
-      current?.content ||
-      "";
+      current?.content || "";
 
     updateCounter();
+
+    $("adminStatus").textContent =
+      "";
 
     show(
       "adminModal"
     );
 
   }else{
+
+    $("email").value =
+      "";
+
+    $("password").value =
+      "";
+
+    $("loginStatus").textContent =
+      "";
 
     show(
       "loginModal"
@@ -763,7 +748,7 @@ $("ownerBtn").onclick = () => {
 
 
 /* ==========================================
-   ĐĂNG NHẬP
+   LOGIN
 ========================================== */
 
 $("loginBtn").onclick =
@@ -771,12 +756,12 @@ async () => {
 
   const email =
     $("email")
-    .value
-    .trim();
+      .value
+      .trim();
 
   const password =
     $("password")
-    .value;
+      .value;
 
 
   if(!email){
@@ -808,6 +793,11 @@ async () => {
 
   try{
 
+    /*
+      Vì đã dùng browserSessionPersistence,
+      phiên này chỉ thuộc tab hiện tại.
+    */
+
     await signInWithEmailAndPassword(
       auth,
       email,
@@ -818,19 +808,16 @@ async () => {
     $("loginStatus").textContent =
       "✅ Đăng nhập thành công.";
 
-
     hide(
       "loginModal"
     );
 
 
     $("textTitle").value =
-      current?.title ||
-      "";
+      current?.title || "";
 
     $("textInput").value =
-      current?.content ||
-      "";
+      current?.content || "";
 
     updateCounter();
 
@@ -843,6 +830,7 @@ async () => {
   }catch(error){
 
     console.error(
+      "Login error:",
       error
     );
 
@@ -852,37 +840,63 @@ async () => {
       error.message;
 
 
-    switch(error.code){
+    if(
+      error.code ===
+      "auth/api-key-not-valid"
+    ){
 
-      case "auth/api-key-not-valid":
-        message =
-          "API Key Firebase không hợp lệ.";
-        break;
+      message =
+        "API Key Firebase không hợp lệ.";
 
-      case "auth/invalid-credential":
-        message =
-          "Email hoặc mật khẩu không đúng.";
-        break;
+    }
 
-      case "auth/user-not-found":
-        message =
-          "Không tìm thấy tài khoản.";
-        break;
+    else if(
+      error.code ===
+      "auth/invalid-credential"
+    ){
 
-      case "auth/wrong-password":
-        message =
-          "Mật khẩu không đúng.";
-        break;
+      message =
+        "Email hoặc mật khẩu không đúng.";
 
-      case "auth/invalid-email":
-        message =
-          "Email không hợp lệ.";
-        break;
+    }
 
-      case "auth/too-many-requests":
-        message =
-          "Có quá nhiều lần đăng nhập. Hãy thử lại sau.";
-        break;
+    else if(
+      error.code ===
+      "auth/user-not-found"
+    ){
+
+      message =
+        "Không tìm thấy tài khoản.";
+
+    }
+
+    else if(
+      error.code ===
+      "auth/wrong-password"
+    ){
+
+      message =
+        "Mật khẩu không đúng.";
+
+    }
+
+    else if(
+      error.code ===
+      "auth/invalid-email"
+    ){
+
+      message =
+        "Email không hợp lệ.";
+
+    }
+
+    else if(
+      error.code ===
+      "auth/too-many-requests"
+    ){
+
+      message =
+        "Có quá nhiều lần đăng nhập. Hãy thử lại sau.";
 
     }
 
@@ -900,7 +914,7 @@ async () => {
 
 
 /* ==========================================
-   THEO DÕI ĐĂNG NHẬP
+   AUTH STATE
 ========================================== */
 
 onAuthStateChanged(
@@ -910,7 +924,7 @@ onAuthStateChanged(
     if(user){
 
       $("ownerBtn").title =
-        "Đã đăng nhập chủ";
+        "Chủ đang đăng nhập trong tab này";
 
     }else{
 
@@ -924,7 +938,7 @@ onAuthStateChanged(
 
 
 /* ==========================================
-   NHẬP VĂN BẢN
+   INPUT
 ========================================== */
 
 $("textInput")
@@ -935,7 +949,7 @@ $("textInput")
 
 
 /* ==========================================
-   ĐĂNG / THAY VĂN BẢN
+   SAVE
 ========================================== */
 
 $("saveBtn").onclick =
@@ -953,14 +967,14 @@ async () => {
 
   const title =
     $("textTitle")
-    .value
-    .trim() ||
+      .value
+      .trim() ||
     "Văn bản";
 
 
   const content =
     $("textInput")
-    .value;
+      .value;
 
 
   if(!content.trim()){
@@ -1018,6 +1032,7 @@ async () => {
   }catch(error){
 
     console.error(
+      "Save error:",
       error
     );
 
@@ -1039,7 +1054,7 @@ async () => {
 
 
 /* ==========================================
-   XÓA VĂN BẢN
+   DELETE
 ========================================== */
 
 $("deleteBtn").onclick =
@@ -1109,6 +1124,7 @@ async () => {
   }catch(error){
 
     console.error(
+      "Delete error:",
       error
     );
 
@@ -1130,7 +1146,7 @@ async () => {
 
 
 /* ==========================================
-   ĐĂNG XUẤT
+   LOGOUT
 ========================================== */
 
 $("logoutBtn").onclick =
@@ -1149,6 +1165,7 @@ async () => {
   }catch(error){
 
     console.error(
+      "Logout error:",
       error
     );
 
@@ -1158,7 +1175,7 @@ async () => {
 
 
 /* ==========================================
-   KHỞI ĐỘNG
+   START
 ========================================== */
 
 loadText();
