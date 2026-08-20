@@ -6,7 +6,9 @@
 <title>Text Share</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -88,11 +90,6 @@ body{
   font-size:17px;
   font-weight:700;
   cursor:pointer;
-  transition:.15s;
-}
-
-.copy-btn:hover{
-  opacity:.9;
 }
 
 .copy-btn:active{
@@ -165,11 +162,6 @@ textarea{
   margin-top:7px;
 }
 
-textarea:focus,
-input:focus{
-  border-color:#151b27;
-}
-
 .row{
   display:flex;
   gap:10px;
@@ -233,17 +225,17 @@ input:focus{
 
 <main id="app">
 
-  <section class="card">
+<section class="card">
 
-    <div id="textArea">
+<div id="textArea">
 
-      <div class="empty">
-        Đang tải văn bản...
-      </div>
+<div class="empty">
+Đang tải văn bản...
+</div>
 
-    </div>
+</div>
 
-  </section>
+</section>
 
 </main>
 
@@ -255,46 +247,46 @@ input:focus{
   id="loginModal"
 >
 
-  <div class="modal">
+<div class="modal">
 
-    <button
-      class="close"
-      data-close="loginModal"
-    >
-      ×
-    </button>
+<button
+  class="close"
+  data-close="loginModal"
+>
+×
+</button>
 
-    <h2>Đăng nhập chủ</h2>
+<h2>Đăng nhập chủ</h2>
 
-    <input
-      id="email"
-      type="email"
-      placeholder="Email"
-    >
+<input
+  id="email"
+  type="email"
+  placeholder="Email"
+>
 
-    <input
-      id="password"
-      type="password"
-      placeholder="Mật khẩu"
-    >
+<input
+  id="password"
+  type="password"
+  placeholder="Mật khẩu"
+>
 
-    <div class="row">
+<div class="row">
 
-      <button
-        class="btn primary"
-        id="loginBtn"
-      >
-        Đăng nhập
-      </button>
+<button
+  class="btn primary"
+  id="loginBtn"
+>
+Đăng nhập
+</button>
 
-    </div>
+</div>
 
-    <div
-      class="status"
-      id="loginStatus"
-    ></div>
+<div
+  class="status"
+  id="loginStatus"
+></div>
 
-  </div>
+</div>
 
 </div>
 
@@ -306,88 +298,86 @@ input:focus{
   id="adminModal"
 >
 
-  <div class="modal">
+<div class="modal">
 
-    <button
-      class="close"
-      data-close="adminModal"
-    >
-      ×
-    </button>
+<button
+  class="close"
+  data-close="adminModal"
+>
+×
+</button>
 
-    <h2>Quản lý văn bản</h2>
+<h2>Quản lý văn bản</h2>
 
-    <input
-      id="textTitle"
-      type="text"
-      placeholder="Tiêu đề văn bản"
-    >
+<input
+  id="textTitle"
+  type="text"
+  placeholder="Tiêu đề văn bản"
+>
 
-    <textarea
-      id="textInput"
-      placeholder="Dán hoặc nhập văn bản vào đây..."
-    ></textarea>
+<textarea
+  id="textInput"
+  placeholder="Dán văn bản vào đây..."
+></textarea>
 
-    <div
-      class="counter"
-      id="counter"
-    >
-      0 ký tự
-    </div>
+<div
+  class="counter"
+  id="counter"
+>
+0 ký tự
+</div>
 
-    <div class="row">
+<div class="row">
 
-      <button
-        class="btn primary"
-        id="saveBtn"
-      >
-        📤 Đăng / thay văn bản
-      </button>
+<button
+  class="btn primary"
+  id="saveBtn"
+>
+📤 Đăng / thay văn bản
+</button>
 
-      <button
-        class="btn danger"
-        id="deleteBtn"
-      >
-        🗑 Xóa văn bản
-      </button>
+<button
+  class="btn danger"
+  id="deleteBtn"
+>
+🗑 Xóa văn bản
+</button>
 
-      <button
-        class="btn"
-        id="logoutBtn"
-      >
-        Đăng xuất
-      </button>
+<button
+  class="btn"
+  id="logoutBtn"
+>
+Đăng xuất
+</button>
 
-    </div>
+</div>
 
-    <div
-      class="status"
-      id="adminStatus"
-    ></div>
+<div
+  class="status"
+  id="adminStatus"
+></div>
 
-  </div>
+</div>
 
 </div>
 
 
 <script type="module">
 
-/* ======================================
-   FIREBASE IMPORT
-====================================== */
+/* =====================================
+   FIREBASE
+===================================== */
 
 import {
   initializeApp
-} from
-"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
 import {
   getAuth,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
-} from
-"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 import {
   getFirestore,
@@ -395,84 +385,71 @@ import {
   getDoc,
   setDoc,
   deleteDoc
-} from
-"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 
-/* ======================================
-   FIREBASE CONFIG
-====================================== */
+/* =====================================
+   CONFIG ĐÚNG CỦA BẠN
+===================================== */
 
 const firebaseConfig = {
-
-  apiKey:
-    "AIzaSyDwKjknHn-FoFA9-g2BlHHUGN7y8GDdIE",
-
-  authDomain:
-    "tai-xuong-sang-kien.firebaseapp.com",
-
-  projectId:
-    "tai-xuong-sang-kien",
-
-  storageBucket:
-    "tai-xuong-sang-kien.firebasestorage.app",
-
-  messagingSenderId:
-    "449492392794",
-
-  appId:
-    "1:449492392794:web:53022357bb0575c55a7163"
-
+  apiKey: "AIzaSyDwKjknHn-FoFA9-g2BlHHUGN7y8GDdIE",
+  authDomain: "tai-xuong-sang-kien.firebaseapp.com",
+  projectId: "tai-xuong-sang-kien",
+  storageBucket: "tai-xuong-sang-kien.firebasestorage.app",
+  messagingSenderId: "449492392794",
+  appId: "1:449492392794:web:53022357bb0575c55a7163"
 };
 
 
-/* ======================================
-   FIREBASE START
-====================================== */
+/* =====================================
+   KHỞI TẠO
+===================================== */
 
 const app =
-  initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 
 const auth =
-  getAuth(app);
+getAuth(app);
 
 const db =
-  getFirestore(app);
-
-
-/* ======================================
-   DOCUMENT
-====================================== */
+getFirestore(app);
 
 const textDoc =
-  doc(
-    db,
-    "public",
-    "mainText"
-  );
+doc(
+  db,
+  "public",
+  "mainText"
+);
 
-let current = null;
+let current=null;
 
 
-/* ======================================
+/* =====================================
    HELPER
-====================================== */
+===================================== */
 
 const $ =
-  id => document.getElementById(id);
+id => document.getElementById(id);
 
-const show =
-  id => $(id).classList.add("show");
+function show(id){
+  $(id).classList.add("show");
+}
 
-const hide =
-  id => $(id).classList.remove("show");
+function hide(id){
+  $(id).classList.remove("show");
+}
 
+
+/* =====================================
+   ĐÓNG MODAL
+===================================== */
 
 document
 .querySelectorAll("[data-close]")
-.forEach(button => {
+.forEach(button=>{
 
-  button.onclick = () => {
+  button.onclick=()=>{
 
     hide(
       button.dataset.close
@@ -483,16 +460,16 @@ document
 });
 
 
-/* ======================================
-   ESCAPE HTML
-====================================== */
+/* =====================================
+   ESCAPE
+===================================== */
 
 function escapeHtml(text){
 
   return String(text)
   .replace(
     /[&<>"']/g,
-    char => ({
+    char=>({
 
       "&":"&amp;",
       "<":"&lt;",
@@ -506,9 +483,9 @@ function escapeHtml(text){
 }
 
 
-/* ======================================
-   COUNTER
-====================================== */
+/* =====================================
+   ĐẾM KÝ TỰ
+===================================== */
 
 function updateCounter(){
 
@@ -519,9 +496,9 @@ function updateCounter(){
 }
 
 
-/* ======================================
-   RENDER
-====================================== */
+/* =====================================
+   HIỂN THỊ
+===================================== */
 
 function render(){
 
@@ -531,7 +508,7 @@ function render(){
 
   if(!current){
 
-    area.innerHTML = `
+    area.innerHTML=`
 
       <div class="empty">
         Chưa có văn bản nào.
@@ -544,7 +521,7 @@ function render(){
   }
 
 
-  area.innerHTML = `
+  area.innerHTML=`
 
     <div class="file-icon">
       📝
@@ -559,7 +536,7 @@ function render(){
 
     <div class="text-box">
       ${escapeHtml(
-        current.content
+        current.content || ""
       )}
     </div>
 
@@ -573,16 +550,15 @@ function render(){
   `;
 
 
-  /* COPY */
-
   $("copyBtn").onclick =
-  async () => {
+  async()=>{
 
     try{
 
-      await navigator.clipboard
+      await navigator
+      .clipboard
       .writeText(
-        current.content
+        current.content || ""
       );
 
     }catch(error){
@@ -593,7 +569,7 @@ function render(){
         );
 
       temp.value =
-        current.content;
+        current.content || "";
 
       document.body.appendChild(
         temp
@@ -614,7 +590,7 @@ function render(){
       "✅ Đã copy!";
 
 
-    setTimeout(() => {
+    setTimeout(()=>{
 
       $("copyBtn").textContent =
         "📋 Copy văn bản";
@@ -626,11 +602,20 @@ function render(){
 }
 
 
-/* ======================================
-   LOAD FIRESTORE
-====================================== */
+/* =====================================
+   ĐỌC FIRESTORE
+===================================== */
 
 async function loadText(){
+
+  $("textArea").innerHTML=`
+
+    <div class="empty">
+      Đang tải văn bản...
+    </div>
+
+  `;
+
 
   try{
 
@@ -647,8 +632,7 @@ async function loadText(){
 
     }else{
 
-      current =
-        null;
+      current=null;
 
     }
 
@@ -658,15 +642,16 @@ async function loadText(){
   }catch(error){
 
     console.error(
+      "Firestore error:",
       error
     );
 
 
-    $("textArea").innerHTML = `
+    $("textArea").innerHTML=`
 
       <div class="empty">
 
-        ❌ Không tải được văn bản.
+        ❌ Không thể tải văn bản.
 
         <br><br>
 
@@ -684,12 +669,11 @@ async function loadText(){
 }
 
 
-/* ======================================
-   OWNER BUTTON
-====================================== */
+/* =====================================
+   NÚT CHỦ
+===================================== */
 
-$("ownerBtn").onclick =
-() => {
+$("ownerBtn").onclick=()=>{
 
   if(auth.currentUser){
 
@@ -701,27 +685,23 @@ $("ownerBtn").onclick =
 
     updateCounter();
 
-    show(
-      "adminModal"
-    );
+    show("adminModal");
 
   }else{
 
-    show(
-      "loginModal"
-    );
+    show("loginModal");
 
   }
 
 };
 
 
-/* ======================================
-   LOGIN
-====================================== */
+/* =====================================
+   ĐĂNG NHẬP
+===================================== */
 
 $("loginBtn").onclick =
-async () => {
+async()=>{
 
   const email =
     $("email")
@@ -733,16 +713,27 @@ async () => {
     .value;
 
 
-  if(!email ||
-     !password){
+  if(!email){
 
     $("loginStatus").textContent =
-      "❌ Hãy nhập email và mật khẩu.";
+      "❌ Chưa nhập email.";
 
     return;
 
   }
 
+
+  if(!password){
+
+    $("loginStatus").textContent =
+      "❌ Chưa nhập mật khẩu.";
+
+    return;
+
+  }
+
+
+  $("loginBtn").disabled=true;
 
   $("loginStatus").textContent =
     "Đang đăng nhập...";
@@ -757,9 +748,10 @@ async () => {
     );
 
 
-    hide(
-      "loginModal"
-    );
+    $("loginStatus").textContent =
+      "✅ Đăng nhập thành công.";
+
+    hide("loginModal");
 
 
     $("textTitle").value =
@@ -770,14 +762,8 @@ async () => {
 
     updateCounter();
 
+    show("adminModal");
 
-    show(
-      "adminModal"
-    );
-
-
-    $("loginStatus").textContent =
-      "";
 
   }catch(error){
 
@@ -786,38 +772,101 @@ async () => {
     );
 
 
+    let message =
+      error.code ||
+      error.message;
+
+
+    if(
+      error.code ===
+      "auth/api-key-not-valid"
+    ){
+
+      message =
+        "API Key Firebase không hợp lệ. " +
+        "Hãy kiểm tra API key trong Firebase Console.";
+
+    }
+
+    else if(
+      error.code ===
+      "auth/invalid-credential"
+    ){
+
+      message =
+        "Email hoặc mật khẩu không đúng.";
+
+    }
+
+    else if(
+      error.code ===
+      "auth/user-not-found"
+    ){
+
+      message =
+        "Không tìm thấy tài khoản này.";
+
+    }
+
+    else if(
+      error.code ===
+      "auth/wrong-password"
+    ){
+
+      message =
+        "Mật khẩu không đúng.";
+
+    }
+
+    else if(
+      error.code ===
+      "auth/too-many-requests"
+    ){
+
+      message =
+        "Có quá nhiều lần đăng nhập. Hãy thử lại sau.";
+
+    }
+
+
     $("loginStatus").textContent =
-      "❌ Đăng nhập thất bại:\n" +
-      (
-        error.code ||
-        error.message
-      );
+      "❌ " + message;
 
   }
+
+
+  $("loginBtn").disabled=false;
 
 };
 
 
-/* ======================================
-   AUTH STATE
-====================================== */
+/* =====================================
+   AUTH
+===================================== */
 
 onAuthStateChanged(
   auth,
-  user => {
+  user=>{
 
-    $("ownerBtn").title =
-      user
-      ? "Quản trị viên đã đăng nhập"
-      : "Đăng nhập chủ";
+    if(user){
+
+      $("ownerBtn").title =
+        "Đã đăng nhập chủ";
+
+    }else{
+
+      $("ownerBtn").title =
+        "Đăng nhập chủ";
+
+    }
 
   }
 );
 
 
-/* ======================================
-   INPUT
-====================================== */
+/* =====================================
+   TEXT INPUT
+===================================== */
 
 $("textInput")
 .addEventListener(
@@ -826,18 +875,17 @@ $("textInput")
 );
 
 
-/* ======================================
-   SAVE
-   CHỈ CHỦ
-====================================== */
+/* =====================================
+   LƯU VĂN BẢN
+===================================== */
 
 $("saveBtn").onclick =
-async () => {
+async()=>{
 
   if(!auth.currentUser){
 
     $("adminStatus").textContent =
-      "❌ Bạn không có quyền.";
+      "❌ Bạn chưa đăng nhập.";
 
     return;
 
@@ -866,17 +914,15 @@ async () => {
   }
 
 
-  $("saveBtn").disabled =
-    true;
-
+  $("saveBtn").disabled=true;
 
   $("adminStatus").textContent =
-    "☁️ Đang lưu lên Firebase...";
+    "☁️ Đang lưu...";
 
 
   try{
 
-    const data = {
+    const data={
 
       title:
         title,
@@ -899,15 +945,14 @@ async () => {
     );
 
 
-    current =
-      data;
-
+    current=data;
 
     render();
 
 
     $("adminStatus").textContent =
-      "✅ Đã đăng / thay văn bản.";
+      "✅ Đã đăng văn bản.";
+
 
   }catch(error){
 
@@ -926,24 +971,22 @@ async () => {
   }
 
 
-  $("saveBtn").disabled =
-    false;
+  $("saveBtn").disabled=false;
 
 };
 
 
-/* ======================================
-   DELETE
-   CHỈ CHỦ
-====================================== */
+/* =====================================
+   XÓA
+===================================== */
 
 $("deleteBtn").onclick =
-async () => {
+async()=>{
 
   if(!auth.currentUser){
 
     $("adminStatus").textContent =
-      "❌ Bạn không có quyền.";
+      "❌ Bạn chưa đăng nhập.";
 
     return;
 
@@ -969,8 +1012,10 @@ async () => {
   }
 
 
+  $("deleteBtn").disabled=true;
+
   $("adminStatus").textContent =
-    "Đang xóa...";
+    "🗑 Đang xóa...";
 
 
   try{
@@ -980,20 +1025,15 @@ async () => {
     );
 
 
-    current =
-      null;
+    current=null;
 
 
-    render();
-
-
-    $("textTitle").value =
-      "";
-
-    $("textInput").value =
-      "";
+    $("textTitle").value="";
+    $("textInput").value="";
 
     updateCounter();
+
+    render();
 
 
     $("adminStatus").textContent =
@@ -1015,15 +1055,18 @@ async () => {
 
   }
 
+
+  $("deleteBtn").disabled=false;
+
 };
 
 
-/* ======================================
-   LOGOUT
-====================================== */
+/* =====================================
+   ĐĂNG XUẤT
+===================================== */
 
 $("logoutBtn").onclick =
-async () => {
+async()=>{
 
   try{
 
@@ -1046,9 +1089,9 @@ async () => {
 };
 
 
-/* ======================================
-   START
-====================================== */
+/* =====================================
+   CHẠY
+===================================== */
 
 loadText();
 
