@@ -1,39 +1,1154 @@
+```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>File Share</title>
+
 <style>
-*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#f3f5f9;color:#1d2433}
-#app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.owner-btn{position:fixed;top:18px;left:18px;width:48px;height:48px;border:1px solid #d8dce6;border-radius:14px;background:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 18px #00000010}
-.card{width:min(92vw,460px);background:#fff;border:1px solid #e1e5ed;border-radius:28px;padding:34px 26px;text-align:center;box-shadow:0 12px 45px #17223b12}
-.file-icon{font-size:76px;margin-bottom:12px}.name{font-size:22px;font-weight:700;word-break:break-word}.size{color:#7b8494;margin:10px 0 25px}
-.download{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 26px;border:0;border-radius:14px;background:#151b27;color:white;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none}
-.download:disabled{opacity:.45;cursor:not-allowed}
-.empty{color:#8b93a3;padding:18px}
-.modal-back{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:20px;z-index:5}.modal-back.show{display:flex}
-.modal{width:min(100%,410px);background:#fff;border-radius:22px;padding:24px;box-shadow:0 20px 60px #0004}.modal h2{margin:0 0 18px}
-input{width:100%;padding:14px;border:1px solid #d8dce6;border-radius:12px;font-size:16px;margin:7px 0}
-.row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}.btn{padding:13px 17px;border-radius:12px;border:1px solid #d8dce6;background:#fff;font-weight:700;cursor:pointer}.primary{background:#151b27;color:#fff;border-color:#151b27}.danger{background:#e53d3d;color:#fff;border-color:#e53d3d}.hidden{display:none}.status{font-size:14px;color:#667085;min-height:20px;margin-top:10px}.close{float:right;border:0;background:none;font-size:22px;cursor:pointer}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f3f5f9;
+  color:#1d2433
+}
+
+#app{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px
+}
+
+.owner-btn{
+  position:fixed;
+  top:18px;
+  left:18px;
+  width:48px;
+  height:48px;
+  border:1px solid #d8dce6;
+  border-radius:14px;
+  background:#fff;
+  font-size:24px;
+  cursor:pointer;
+  box-shadow:0 4px 18px #00000010
+}
+
+.card{
+  width:min(92vw,460px);
+  background:#fff;
+  border:1px solid #e1e5ed;
+  border-radius:28px;
+  padding:34px 26px;
+  text-align:center;
+  box-shadow:0 12px 45px #17223b12
+}
+
+.file-icon{
+  font-size:76px;
+  margin-bottom:12px
+}
+
+.name{
+  font-size:22px;
+  font-weight:700;
+  word-break:break-word
+}
+
+.size{
+  color:#7b8494;
+  margin:10px 0 25px
+}
+
+.download{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:15px 26px;
+  border:0;
+  border-radius:14px;
+  background:#151b27;
+  color:white;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  text-decoration:none
+}
+
+.download:disabled{
+  opacity:.45;
+  cursor:not-allowed
+}
+
+.empty{
+  color:#8b93a3;
+  padding:18px
+}
+
+.modal-back{
+  position:fixed;
+  inset:0;
+  background:#0008;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:5
+}
+
+.modal-back.show{
+  display:flex
+}
+
+.modal{
+  width:min(100%,410px);
+  background:#fff;
+  border-radius:22px;
+  padding:24px;
+  box-shadow:0 20px 60px #0004
+}
+
+.modal h2{
+  margin:0 0 18px
+}
+
+input{
+  width:100%;
+  padding:14px;
+  border:1px solid #d8dce6;
+  border-radius:12px;
+  font-size:16px;
+  margin:7px 0
+}
+
+.row{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+  flex-wrap:wrap
+}
+
+.btn{
+  padding:13px 17px;
+  border-radius:12px;
+  border:1px solid #d8dce6;
+  background:#fff;
+  font-weight:700;
+  cursor:pointer
+}
+
+.btn:disabled{
+  opacity:.5;
+  cursor:not-allowed
+}
+
+.primary{
+  background:#151b27;
+  color:#fff;
+  border-color:#151b27
+}
+
+.danger{
+  background:#e53d3d;
+  color:#fff;
+  border-color:#e53d3d
+}
+
+.hidden{
+  display:none
+}
+
+.status{
+  font-size:14px;
+  color:#667085;
+  min-height:20px;
+  margin-top:10px;
+  white-space:pre-wrap;
+  word-break:break-word
+}
+
+.close{
+  float:right;
+  border:0;
+  background:none;
+  font-size:22px;
+  cursor:pointer
+}
 </style>
 </head>
+
 <body>
-<button class="owner-btn" id="ownerBtn" title="Quản trị">🔧</button>
+
+<button class="owner-btn" id="ownerBtn" title="Quản trị">
+  🔧
+</button>
 
 <main id="app">
   <section class="card">
-    <div id="fileArea"><div class="empty">Đang tải tệp...</div></div>
+
+    <div id="fileArea">
+      <div class="empty">
+        Đang tải tệp...
+      </div>
+    </div>
+
   </section>
 </main>
 
-<div class="modal-back" id="loginModal"><div class="modal">
-  <button class="close" data-close="loginModal">×</button>
-  <h2>Đăng nhập chủ</h2>
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Mật khẩu">
-  <div class="row"><button class="btn primary" id="loginBtn">Đăng nhập</button></div>
+
+<!-- LOGIN -->
+
+<div class="modal-back" id="loginModal">
+
+  <div class="modal">
+
+    <button class="close" data-close="loginModal">
+      ×
+    </button>
+
+    <h2>Đăng nhập chủ</h2>
+
+    <input
+      id="email"
+      type="email"
+      placeholder="Email"
+      autocomplete="username"
+    >
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Mật khẩu"
+      autocomplete="current-password"
+    >
+
+    <div class="row">
+
+      <button
+        class="btn primary"
+        id="loginBtn"
+      >
+        Đăng nhập
+      </button>
+
+    </div>
+
+    <div
+      class="status"
+      id="loginStatus"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<!-- ADMIN -->
+
+<div class="modal-back" id="adminModal">
+
+  <div class="modal">
+
+    <button class="close" data-close="adminModal">
+      ×
+    </button>
+
+    <h2>Quản lý tệp</h2>
+
+    <p id="adminFileName">
+      Chưa có tệp.
+    </p>
+
+    <input
+      id="newFile"
+      type="file"
+    >
+
+    <div class="row">
+
+      <button
+        class="btn primary"
+        id="uploadBtn"
+      >
+        Thay tệp / tải tệp mới
+      </button>
+
+      <button
+        class="btn danger"
+        id="deleteBtn"
+      >
+        Xóa tệp
+      </button>
+
+      <button
+        class="btn"
+        id="logoutBtn"
+      >
+        Đăng xuất
+      </button>
+
+    </div>
+
+    <div
+      class="status"
+      id="adminStatus"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+/* =====================================
+   FIREBASE
+===================================== */
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-storage.js";
+
+
+/* =====================================
+   FIREBASE CONFIG
+===================================== */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyDwKjknHn-FoFA9-g2BlHHUGnN7y8GDdIE",
+
+  authDomain:
+    "tai-xuong-sang-kien.firebaseapp.com",
+
+  projectId:
+    "tai-xuong-sang-kien",
+
+  storageBucket:
+    "tai-xuong-sang-kien.firebasestorage.app",
+
+  messagingSenderId:
+    "449492392794",
+
+  appId:
+    "1:449492392794:web:53022357bb0575c55a7163"
+};
+
+
+/* =====================================
+   INITIALIZE
+===================================== */
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+const storage = getStorage(app);
+
+const fileDoc =
+  doc(db,"public","mainFile");
+
+let current = null;
+
+
+/* =====================================
+   HELPER
+===================================== */
+
+const $ = id =>
+  document.getElementById(id);
+
+const show = id =>
+  $(id).classList.add("show");
+
+const hide = id =>
+  $(id).classList.remove("show");
+
+
+document
+  .querySelectorAll("[data-close]")
+  .forEach(button => {
+
+    button.onclick = () =>
+      hide(button.dataset.close);
+
+  });
+
+
+function bytes(n){
+
+  if(!n && n !== 0)
+    return "";
+
+  const units =
+    ["B","KB","MB","GB"];
+
+  const i =
+    Math.floor(
+      Math.log(
+        Math.max(n,1)
+      ) / Math.log(1024)
+    );
+
+  return (
+    (n / Math.pow(1024,i))
+      .toFixed(i ? 1 : 0)
+    + " "
+    + units[i]
+  );
+}
+
+
+function escapeHtml(s){
+
+  return String(s).replace(
+    /[&<>"']/g,
+
+    c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[c])
+  );
+
+}
+
+
+/* =====================================
+   RENDER
+===================================== */
+
+function render(){
+
+  const area =
+    $("fileArea");
+
+
+  if(!current){
+
+    area.innerHTML = `
+      <div class="empty">
+        Hiện chưa có tệp nào.
+      </div>
+    `;
+
+    $("adminFileName")
+      .textContent =
+      "Chưa có tệp.";
+
+    return;
+  }
+
+
+  area.innerHTML = `
+
+    <div class="file-icon">
+      📄
+    </div>
+
+    <div class="name">
+      ${escapeHtml(current.name)}
+    </div>
+
+    <div class="size">
+      ${bytes(current.size)}
+    </div>
+
+    <a
+      class="download"
+      href="${current.url}"
+      download="${escapeHtml(current.name)}"
+    >
+      ⬇ Tải xuống
+    </a>
+
+  `;
+
+
+  $("adminFileName")
+    .textContent =
+    current.name;
+}
+
+
+/* =====================================
+   LOAD FILE
+===================================== */
+
+async function loadFile(){
+
+  try{
+
+    const snap =
+      await getDoc(fileDoc);
+
+
+    if(snap.exists()){
+
+      current =
+        snap.data();
+
+    }else{
+
+      current =
+        null;
+
+    }
+
+
+    render();
+
+  }catch(error){
+
+    console.error(
+      "Firestore error:",
+      error
+    );
+
+
+    $("fileArea").innerHTML = `
+
+      <div class="empty">
+
+        ❌ Không tải được dữ liệu.
+
+        <br><br>
+
+        ${escapeHtml(
+          error.code ||
+          error.message
+        )}
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =====================================
+   OWNER BUTTON
+===================================== */
+
+$("ownerBtn").onclick = () => {
+
+  if(auth.currentUser){
+
+    show("adminModal");
+
+  }else{
+
+    show("loginModal");
+
+  }
+
+};
+
+
+/* =====================================
+   LOGIN
+===================================== */
+
+$("loginBtn").onclick =
+async () => {
+
+  const email =
+    $("email").value.trim();
+
+  const password =
+    $("password").value;
+
+
+  if(!email || !password){
+
+    $("loginStatus")
+      .textContent =
+      "❌ Nhập email và mật khẩu.";
+
+    return;
+
+  }
+
+
+  $("loginStatus")
+    .textContent =
+    "Đang đăng nhập...";
+
+
+  try{
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+
+    $("loginStatus")
+      .textContent =
+      "✅ Đăng nhập thành công.";
+
+    hide("loginModal");
+
+    show("adminModal");
+
+
+  }catch(error){
+
+    console.error(
+      "Login error:",
+      error
+    );
+
+
+    $("loginStatus")
+      .textContent =
+      "❌ Không đăng nhập được: " +
+      (
+        error.code ||
+        error.message
+      );
+
+  }
+
+};
+
+
+/* =====================================
+   AUTH STATE
+===================================== */
+
+onAuthStateChanged(
+  auth,
+  user => {
+
+    $("ownerBtn").title =
+      user
+        ? "Quản trị viên đã đăng nhập"
+        : "Đăng nhập chủ";
+
+  }
+);
+
+
+/* =====================================
+   UPLOAD
+===================================== */
+
+$("uploadBtn").onclick =
+async () => {
+
+  const file =
+    $("newFile").files[0];
+
+
+  if(!file){
+
+    $("adminStatus")
+      .textContent =
+      "❌ Hãy chọn một tệp.";
+
+    return;
+
+  }
+
+
+  if(!auth.currentUser){
+
+    $("adminStatus")
+      .textContent =
+      "❌ Bạn chưa đăng nhập.";
+
+    return;
+
+  }
+
+
+  const uploadButton =
+    $("uploadBtn");
+
+
+  uploadButton.disabled =
+    true;
+
+  uploadButton.style.opacity =
+    "0.5";
+
+
+  $("adminStatus")
+    .textContent =
+    "Đang chuẩn bị tải lên...";
+
+
+  try{
+
+    /* Tên file an toàn */
+
+    const safeName =
+      file.name
+        .replace(
+          /[^\w.\-]/g,
+          "_"
+        )
+        .replace(
+          /_+/g,
+          "_"
+        );
+
+
+    const path =
+      "shared/main_" +
+      Date.now() +
+      "_" +
+      safeName;
+
+
+    const storageRef =
+      ref(storage,path);
+
+
+    /* Upload có tiến trình */
+
+    const uploadTask =
+      uploadBytesResumable(
+        storageRef,
+        file
+      );
+
+
+    uploadTask.on(
+
+      "state_changed",
+
+
+      /* PROGRESS */
+
+      snapshot => {
+
+        const percent =
+          Math.round(
+
+            (
+              snapshot.bytesTransferred /
+              snapshot.totalBytes
+            ) * 100
+
+          );
+
+
+        $("adminStatus")
+          .textContent =
+          `Đang tải lên... ${percent}%`;
+
+      },
+
+
+      /* ERROR */
+
+      error => {
+
+        console.error(
+          "Firebase Storage:",
+          error
+        );
+
+
+        let message;
+
+
+        switch(error.code){
+
+          case "storage/unauthorized":
+
+            message =
+              "❌ Không có quyền tải lên Storage.\n\nHãy kiểm tra Storage Rules.";
+
+            break;
+
+
+          case "storage/unauthenticated":
+
+            message =
+              "❌ Phiên đăng nhập không hợp lệ.\n\nHãy đăng nhập lại.";
+
+            break;
+
+
+          case "storage/bucket-not-found":
+
+            message =
+              "❌ Không tìm thấy Storage Bucket.\n\nKiểm tra Storage trong Firebase.";
+
+            break;
+
+
+          case "storage/quota-exceeded":
+
+            message =
+              "❌ Storage đã vượt giới hạn.";
+
+            break;
+
+
+          case "storage/retry-limit-exceeded":
+
+            message =
+              "❌ Tải lên quá lâu.\n\nHãy kiểm tra mạng rồi thử lại.";
+
+            break;
+
+
+          case "storage/canceled":
+
+            message =
+              "❌ Đã hủy tải lên.";
+
+            break;
+
+
+          default:
+
+            message =
+              "❌ Lỗi Firebase:\n" +
+              (
+                error.code ||
+                error.message
+              );
+
+        }
+
+
+        $("adminStatus")
+          .textContent =
+          message;
+
+
+        uploadButton.disabled =
+          false;
+
+        uploadButton.style.opacity =
+          "1";
+
+      },
+
+
+      /* SUCCESS */
+
+      async () => {
+
+        try{
+
+          $("adminStatus")
+            .textContent =
+            "Đang hoàn tất...";
+
+
+          const url =
+            await getDownloadURL(
+              uploadTask.snapshot.ref
+            );
+
+
+          const newFile = {
+
+            name:
+              file.name,
+
+            size:
+              file.size,
+
+            url:
+              url,
+
+            storagePath:
+              path,
+
+            updatedAt:
+              Date.now(),
+
+            uploadedBy:
+              auth.currentUser.uid
+
+          };
+
+
+          /*
+            Lưu Firestore
+          */
+
+          await setDoc(
+            fileDoc,
+            newFile
+          );
+
+
+          /*
+            Chỉ xóa file cũ
+            sau khi file mới
+            đã upload thành công
+          */
+
+          if(
+            current &&
+            current.storagePath &&
+            current.storagePath !== path
+          ){
+
+            try{
+
+              await deleteObject(
+                ref(
+                  storage,
+                  current.storagePath
+                )
+              );
+
+            }catch(oldError){
+
+              console.warn(
+                "Không xóa được file cũ:",
+                oldError
+              );
+
+            }
+
+          }
+
+
+          current =
+            newFile;
+
+
+          $("newFile")
+            .value = "";
+
+
+          render();
+
+
+          $("adminStatus")
+            .textContent =
+            "✅ Tải tệp lên thành công.";
+
+
+        }catch(error){
+
+          console.error(
+            "Save error:",
+            error
+          );
+
+
+          $("adminStatus")
+            .textContent =
+            "❌ Upload xong nhưng lưu Firestore thất bại:\n" +
+            (
+              error.code ||
+              error.message
+            );
+
+        }
+
+
+        uploadButton.disabled =
+          false;
+
+        uploadButton.style.opacity =
+          "1";
+
+      }
+
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Upload start error:",
+      error
+    );
+
+
+    $("adminStatus")
+      .textContent =
+      "❌ Không thể bắt đầu tải lên:\n" +
+      (
+        error.code ||
+        error.message
+      );
+
+
+    uploadButton.disabled =
+      false;
+
+    uploadButton.style.opacity =
+      "1";
+
+  }
+
+};
+
+
+/* =====================================
+   DELETE
+===================================== */
+
+$("deleteBtn").onclick =
+async () => {
+
+  if(!current){
+
+    $("adminStatus")
+      .textContent =
+      "Không có tệp để xóa.";
+
+    return;
+
+  }
+
+
+  if(
+    !confirm(
+      "Bạn chắc chắn muốn xóa tệp này?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  $("adminStatus")
+    .textContent =
+    "Đang xóa...";
+
+
+  try{
+
+    if(current.storagePath){
+
+      await deleteObject(
+        ref(
+          storage,
+          current.storagePath
+        )
+      );
+
+    }
+
+
+    await deleteDoc(
+      fileDoc
+    );
+
+
+    current =
+      null;
+
+
+    render();
+
+
+    $("adminStatus")
+      .textContent =
+      "✅ Đã xóa tệp.";
+
+
+  }catch(error){
+
+    console.error(
+      "Delete error:",
+      error
+    );
+
+
+    $("adminStatus")
+      .textContent =
+      "❌ Lỗi xóa:\n" +
+      (
+        error.code ||
+        error.message
+      );
+
+  }
+
+};
+
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+$("logoutBtn").onclick =
+async () => {
+
+  try{
+
+    await signOut(auth);
+
+    hide("adminModal");
+
+    $("adminStatus")
+      .textContent = "";
+
+  }catch(error){
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
+  }
+
+};
+
+
+/* =====================================
+   START
+===================================== */
+
+loadFile();
+
+</script>
+
+</body>
+</html>
+```
   <div class="status" id="loginStatus"></div>
 </div></div>
 
