@@ -57,14 +57,22 @@ import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstati
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-storage.js";
 
 /* DÁN CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY */
+// Import the functions you need from the SDKs you need
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "DAN_API_KEY_VAO_DAY",
-  authDomain: "DAN_AUTH_DOMAIN_VAO_DAY",
-  projectId: "DAN_PROJECT_ID_VAO_DAY",
-  storageBucket: "DAN_STORAGE_BUCKET_VAO_DAY",
-  messagingSenderId: "DAN_MESSAGING_SENDER_ID_VAO_DAY",
-  appId: "DAN_APP_ID_VAO_DAY"
+  apiKey: "AIzaSyDwKjknHn-FoFA9-g2BlHHUGnN7y8GDdIE",
+  authDomain: "tai-xuong-sang-kien.firebaseapp.com",
+  projectId: "tai-xuong-sang-kien",
+  storageBucket: "tai-xuong-sang-kien.firebasestorage.app",
+  messagingSenderId: "449492392794",
+  appId: "1:449492392794:web:53022357bb0575c55a7163"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
