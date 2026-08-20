@@ -90,6 +90,11 @@ body{
   font-size:17px;
   font-weight:700;
   cursor:pointer;
+  transition:.15s;
+}
+
+.copy-btn:hover{
+  opacity:.9;
 }
 
 .copy-btn:active{
@@ -160,6 +165,11 @@ textarea{
   line-height:1.5;
   outline:none;
   margin-top:7px;
+}
+
+textarea:focus,
+input:focus{
+  border-color:#151b27;
 }
 
 .row{
@@ -240,7 +250,9 @@ textarea{
 </main>
 
 
-<!-- LOGIN -->
+<!-- =========================
+     ĐĂNG NHẬP CHỦ
+========================= -->
 
 <div
   class="modal-back"
@@ -262,12 +274,14 @@ textarea{
   id="email"
   type="email"
   placeholder="Email"
+  autocomplete="email"
 >
 
 <input
   id="password"
   type="password"
   placeholder="Mật khẩu"
+  autocomplete="current-password"
 >
 
 <div class="row">
@@ -291,7 +305,9 @@ textarea{
 </div>
 
 
-<!-- ADMIN -->
+<!-- =========================
+     QUẢN LÝ
+========================= -->
 
 <div
   class="modal-back"
@@ -364,20 +380,24 @@ textarea{
 
 <script type="module">
 
-/* =====================================
-   FIREBASE
-===================================== */
+/* ==========================================
+   FIREBASE SDK
+========================================== */
 
 import {
   initializeApp
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+}
+from
+"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
 import {
   getAuth,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+}
+from
+"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 import {
   getFirestore,
@@ -385,71 +405,101 @@ import {
   getDoc,
   setDoc,
   deleteDoc
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+}
+from
+"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 
-/* =====================================
-   CONFIG ĐÚNG CỦA BẠN
-===================================== */
+/* ==========================================
+   FIREBASE CONFIG
+   PROJECT: quan-ly-lop-53dab
+========================================== */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDwKjknHn-FoFA9-g2BlHHUGN7y8GDdIE",
-  authDomain: "tai-xuong-sang-kien.firebaseapp.com",
-  projectId: "tai-xuong-sang-kien",
-  storageBucket: "tai-xuong-sang-kien.firebasestorage.app",
-  messagingSenderId: "449492392794",
-  appId: "1:449492392794:web:53022357bb0575c55a7163"
+
+  apiKey:
+    "AIzaSyATRcv49PCkANBb_2l3PbKVnyU_1uQV86Q",
+
+  authDomain:
+    "quan-ly-lop-53dab.firebaseapp.com",
+
+  projectId:
+    "quan-ly-lop-53dab",
+
+  storageBucket:
+    "quan-ly-lop-53dab.firebasestorage.app",
+
+  messagingSenderId:
+    "819279256921",
+
+  appId:
+    "1:819279256921:web:f09c1e282724b141f14048",
+
+  measurementId:
+    "G-LTHGVR1Y7F"
+
 };
 
 
-/* =====================================
-   KHỞI TẠO
-===================================== */
+/* ==========================================
+   KHỞI TẠO FIREBASE
+========================================== */
 
 const app =
-initializeApp(firebaseConfig);
+  initializeApp(firebaseConfig);
 
 const auth =
-getAuth(app);
+  getAuth(app);
 
 const db =
-getFirestore(app);
+  getFirestore(app);
+
+
+/* ==========================================
+   FIRESTORE DOCUMENT
+========================================== */
 
 const textDoc =
-doc(
-  db,
-  "public",
-  "mainText"
-);
+  doc(
+    db,
+    "public",
+    "mainText"
+  );
 
-let current=null;
+let current = null;
 
 
-/* =====================================
+/* ==========================================
    HELPER
-===================================== */
+========================================== */
 
 const $ =
-id => document.getElementById(id);
+  id => document.getElementById(id);
+
 
 function show(id){
+
   $(id).classList.add("show");
+
 }
+
 
 function hide(id){
+
   $(id).classList.remove("show");
+
 }
 
 
-/* =====================================
-   ĐÓNG MODAL
-===================================== */
+/* ==========================================
+   ĐÓNG CỬA SỔ
+========================================== */
 
 document
 .querySelectorAll("[data-close]")
-.forEach(button=>{
+.forEach(button => {
 
-  button.onclick=()=>{
+  button.onclick = () => {
 
     hide(
       button.dataset.close
@@ -460,16 +510,16 @@ document
 });
 
 
-/* =====================================
-   ESCAPE
-===================================== */
+/* ==========================================
+   ESCAPE HTML
+========================================== */
 
 function escapeHtml(text){
 
   return String(text)
   .replace(
     /[&<>"']/g,
-    char=>({
+    char => ({
 
       "&":"&amp;",
       "<":"&lt;",
@@ -483,9 +533,9 @@ function escapeHtml(text){
 }
 
 
-/* =====================================
+/* ==========================================
    ĐẾM KÝ TỰ
-===================================== */
+========================================== */
 
 function updateCounter(){
 
@@ -496,9 +546,9 @@ function updateCounter(){
 }
 
 
-/* =====================================
-   HIỂN THỊ
-===================================== */
+/* ==========================================
+   HIỂN THỊ VĂN BẢN CHO KHÁCH
+========================================== */
 
 function render(){
 
@@ -508,7 +558,7 @@ function render(){
 
   if(!current){
 
-    area.innerHTML=`
+    area.innerHTML = `
 
       <div class="empty">
         Chưa có văn bản nào.
@@ -521,7 +571,7 @@ function render(){
   }
 
 
-  area.innerHTML=`
+  area.innerHTML = `
 
     <div class="file-icon">
       📝
@@ -536,7 +586,8 @@ function render(){
 
     <div class="text-box">
       ${escapeHtml(
-        current.content || ""
+        current.content ||
+        ""
       )}
     </div>
 
@@ -550,16 +601,24 @@ function render(){
   `;
 
 
+  /* ========================================
+     COPY
+  ======================================== */
+
   $("copyBtn").onclick =
-  async()=>{
+  async () => {
+
+    const content =
+      current.content || "";
+
 
     try{
 
       await navigator
-      .clipboard
-      .writeText(
-        current.content || ""
-      );
+        .clipboard
+        .writeText(
+          content
+        );
 
     }catch(error){
 
@@ -569,7 +628,7 @@ function render(){
         );
 
       temp.value =
-        current.content || "";
+        content;
 
       document.body.appendChild(
         temp
@@ -590,7 +649,7 @@ function render(){
       "✅ Đã copy!";
 
 
-    setTimeout(()=>{
+    setTimeout(() => {
 
       $("copyBtn").textContent =
         "📋 Copy văn bản";
@@ -602,13 +661,13 @@ function render(){
 }
 
 
-/* =====================================
-   ĐỌC FIRESTORE
-===================================== */
+/* ==========================================
+   TẢI VĂN BẢN TỪ FIRESTORE
+========================================== */
 
 async function loadText(){
 
-  $("textArea").innerHTML=`
+  $("textArea").innerHTML = `
 
     <div class="empty">
       Đang tải văn bản...
@@ -632,7 +691,8 @@ async function loadText(){
 
     }else{
 
-      current=null;
+      current =
+        null;
 
     }
 
@@ -642,16 +702,16 @@ async function loadText(){
   }catch(error){
 
     console.error(
-      "Firestore error:",
+      "Firestore:",
       error
     );
 
 
-    $("textArea").innerHTML=`
+    $("textArea").innerHTML = `
 
       <div class="empty">
 
-        ❌ Không thể tải văn bản.
+        ❌ Không tải được văn bản.
 
         <br><br>
 
@@ -669,39 +729,45 @@ async function loadText(){
 }
 
 
-/* =====================================
-   NÚT CHỦ
-===================================== */
+/* ==========================================
+   NÚT QUẢN TRỊ
+========================================== */
 
-$("ownerBtn").onclick=()=>{
+$("ownerBtn").onclick = () => {
 
   if(auth.currentUser){
 
     $("textTitle").value =
-      current?.title || "";
+      current?.title ||
+      "";
 
     $("textInput").value =
-      current?.content || "";
+      current?.content ||
+      "";
 
     updateCounter();
 
-    show("adminModal");
+    show(
+      "adminModal"
+    );
 
   }else{
 
-    show("loginModal");
+    show(
+      "loginModal"
+    );
 
   }
 
 };
 
 
-/* =====================================
+/* ==========================================
    ĐĂNG NHẬP
-===================================== */
+========================================== */
 
 $("loginBtn").onclick =
-async()=>{
+async () => {
 
   const email =
     $("email")
@@ -716,7 +782,7 @@ async()=>{
   if(!email){
 
     $("loginStatus").textContent =
-      "❌ Chưa nhập email.";
+      "❌ Hãy nhập email.";
 
     return;
 
@@ -726,14 +792,15 @@ async()=>{
   if(!password){
 
     $("loginStatus").textContent =
-      "❌ Chưa nhập mật khẩu.";
+      "❌ Hãy nhập mật khẩu.";
 
     return;
 
   }
 
 
-  $("loginBtn").disabled=true;
+  $("loginBtn").disabled =
+    true;
 
   $("loginStatus").textContent =
     "Đang đăng nhập...";
@@ -751,18 +818,26 @@ async()=>{
     $("loginStatus").textContent =
       "✅ Đăng nhập thành công.";
 
-    hide("loginModal");
+
+    hide(
+      "loginModal"
+    );
 
 
     $("textTitle").value =
-      current?.title || "";
+      current?.title ||
+      "";
 
     $("textInput").value =
-      current?.content || "";
+      current?.content ||
+      "";
 
     updateCounter();
 
-    show("adminModal");
+
+    show(
+      "adminModal"
+    );
 
 
   }catch(error){
@@ -777,54 +852,37 @@ async()=>{
       error.message;
 
 
-    if(
-      error.code ===
-      "auth/api-key-not-valid"
-    ){
+    switch(error.code){
 
-      message =
-        "API Key Firebase không hợp lệ. " +
-        "Hãy kiểm tra API key trong Firebase Console.";
+      case "auth/api-key-not-valid":
+        message =
+          "API Key Firebase không hợp lệ.";
+        break;
 
-    }
+      case "auth/invalid-credential":
+        message =
+          "Email hoặc mật khẩu không đúng.";
+        break;
 
-    else if(
-      error.code ===
-      "auth/invalid-credential"
-    ){
+      case "auth/user-not-found":
+        message =
+          "Không tìm thấy tài khoản.";
+        break;
 
-      message =
-        "Email hoặc mật khẩu không đúng.";
+      case "auth/wrong-password":
+        message =
+          "Mật khẩu không đúng.";
+        break;
 
-    }
+      case "auth/invalid-email":
+        message =
+          "Email không hợp lệ.";
+        break;
 
-    else if(
-      error.code ===
-      "auth/user-not-found"
-    ){
-
-      message =
-        "Không tìm thấy tài khoản này.";
-
-    }
-
-    else if(
-      error.code ===
-      "auth/wrong-password"
-    ){
-
-      message =
-        "Mật khẩu không đúng.";
-
-    }
-
-    else if(
-      error.code ===
-      "auth/too-many-requests"
-    ){
-
-      message =
-        "Có quá nhiều lần đăng nhập. Hãy thử lại sau.";
+      case "auth/too-many-requests":
+        message =
+          "Có quá nhiều lần đăng nhập. Hãy thử lại sau.";
+        break;
 
     }
 
@@ -835,18 +893,19 @@ async()=>{
   }
 
 
-  $("loginBtn").disabled=false;
+  $("loginBtn").disabled =
+    false;
 
 };
 
 
-/* =====================================
-   AUTH
-===================================== */
+/* ==========================================
+   THEO DÕI ĐĂNG NHẬP
+========================================== */
 
 onAuthStateChanged(
   auth,
-  user=>{
+  user => {
 
     if(user){
 
@@ -864,9 +923,9 @@ onAuthStateChanged(
 );
 
 
-/* =====================================
-   TEXT INPUT
-===================================== */
+/* ==========================================
+   NHẬP VĂN BẢN
+========================================== */
 
 $("textInput")
 .addEventListener(
@@ -875,12 +934,12 @@ $("textInput")
 );
 
 
-/* =====================================
-   LƯU VĂN BẢN
-===================================== */
+/* ==========================================
+   ĐĂNG / THAY VĂN BẢN
+========================================== */
 
 $("saveBtn").onclick =
-async()=>{
+async () => {
 
   if(!auth.currentUser){
 
@@ -914,7 +973,8 @@ async()=>{
   }
 
 
-  $("saveBtn").disabled=true;
+  $("saveBtn").disabled =
+    true;
 
   $("adminStatus").textContent =
     "☁️ Đang lưu...";
@@ -922,7 +982,7 @@ async()=>{
 
   try{
 
-    const data={
+    const data = {
 
       title:
         title,
@@ -945,14 +1005,15 @@ async()=>{
     );
 
 
-    current=data;
+    current =
+      data;
+
 
     render();
 
 
     $("adminStatus").textContent =
-      "✅ Đã đăng văn bản.";
-
+      "✅ Đã đăng / thay văn bản.";
 
   }catch(error){
 
@@ -971,17 +1032,18 @@ async()=>{
   }
 
 
-  $("saveBtn").disabled=false;
+  $("saveBtn").disabled =
+    false;
 
 };
 
 
-/* =====================================
-   XÓA
-===================================== */
+/* ==========================================
+   XÓA VĂN BẢN
+========================================== */
 
 $("deleteBtn").onclick =
-async()=>{
+async () => {
 
   if(!auth.currentUser){
 
@@ -1012,7 +1074,8 @@ async()=>{
   }
 
 
-  $("deleteBtn").disabled=true;
+  $("deleteBtn").disabled =
+    true;
 
   $("adminStatus").textContent =
     "🗑 Đang xóa...";
@@ -1025,11 +1088,15 @@ async()=>{
     );
 
 
-    current=null;
+    current =
+      null;
 
 
-    $("textTitle").value="";
-    $("textInput").value="";
+    $("textTitle").value =
+      "";
+
+    $("textInput").value =
+      "";
 
     updateCounter();
 
@@ -1056,17 +1123,18 @@ async()=>{
   }
 
 
-  $("deleteBtn").disabled=false;
+  $("deleteBtn").disabled =
+    false;
 
 };
 
 
-/* =====================================
+/* ==========================================
    ĐĂNG XUẤT
-===================================== */
+========================================== */
 
 $("logoutBtn").onclick =
-async()=>{
+async () => {
 
   try{
 
@@ -1089,9 +1157,9 @@ async()=>{
 };
 
 
-/* =====================================
-   CHẠY
-===================================== */
+/* ==========================================
+   KHỞI ĐỘNG
+========================================== */
 
 loadText();
 
