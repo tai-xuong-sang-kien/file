@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>File Share</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#f3f5f9;color:#1d2433}
+#app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.owner-btn{position:fixed;top:18px;left:18px;width:48px;height:48px;border:1px solid #d8dce6;border-radius:14px;background:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 18px #00000010}
+.card{width:min(92vw,460px);background:#fff;border:1px solid #e1e5ed;border-radius:28px;padding:34px 26px;text-align:center;box-shadow:0 12px 45px #17223b12}
+.file-icon{font-size:76px;margin-bottom:12px}.name{font-size:22px;font-weight:700;word-break:break-word}.size{color:#7b8494;margin:10px 0 25px}
+.download{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 26px;border:0;border-radius:14px;background:#151b27;color:white;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none}
+.download:disabled{opacity:.45;cursor:not-allowed}
+.empty{color:#8b93a3;padding:18px}
+.modal-back{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:20px;z-index:5}.modal-back.show{display:flex}
+.modal{width:min(100%,410px);background:#fff;border-radius:22px;padding:24px;box-shadow:0 20px 60px #0004}.modal h2{margin:0 0 18px}
+input{width:100%;padding:14px;border:1px solid #d8dce6;border-radius:12px;font-size:16px;margin:7px 0}
+.row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}.btn{padding:13px 17px;border-radius:12px;border:1px solid #d8dce6;background:#fff;font-weight:700;cursor:pointer}.primary{background:#151b27;color:#fff;border-color:#151b27}.danger{background:#e53d3d;color:#fff;border-color:#e53d3d}.hidden{display:none}.status{font-size:14px;color:#667085;min-height:20px;margin-top:10px}.close{float:right;border:0;background:none;font-size:22px;cursor:pointer}
+</style>
+</head>
+<body>
+<button class="owner-btn" id="ownerBtn" title="Quản trị">🔧</button>
+
+<main id="app">
+  <section class="card">
+    <div id="fileArea"><div class="empty">Đang tải tệp...</div></div>
+  </section>
+</main>
+
+<div class="modal-back" id="loginModal"><div class="modal">
+  <button class="close" data-close="loginModal">×</button>
+  <h2>Đăng nhập chủ</h2>
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Mật khẩu">
+  <div class="row"><button class="btn primary" id="loginBtn">Đăng nhập</button></div>
+  <div class="status" id="loginStatus"></div>
+</div></div>
+
+<div class="modal-back" id="adminModal"><div class="modal">
+  <button class="close" data-close="adminModal">×</button>
+  <h2>Quản lý tệp</h2>
+  <p id="adminFileName">Chưa có tệp.</p>
+  <input id="newFile" type="file">
+  <div class="row">
+    <button class="btn primary" id="uploadBtn">Thay tệp / tải tệp mới</button>
+    <button class="btn danger" id="deleteBtn">Xóa tệp</button>
+    <button class="btn" id="logoutBtn">Đăng xuất</button>
+  </div>
+  <div class="status" id="adminStatus"></div>
+</div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-storage.js";
+
+/* DÁN CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY */
+const firebaseConfig = {
+  apiKey: "DAN_API_KEY_VAO_DAY",
+  authDomain: "DAN_AUTH_DOMAIN_VAO_DAY",
+  projectId: "DAN_PROJECT_ID_VAO_DAY",
+  storageBucket: "DAN_STORAGE_BUCKET_VAO_DAY",
+  messagingSenderId: "DAN_MESSAGING_SENDER_ID_VAO_DAY",
+  appId: "DAN_APP_ID_VAO_DAY"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+const fileDoc = doc(db, "public", "mainFile");
+let current = null;
+
+const $=id=>document.getElementById(id);
+const show=id=>$(id).classList.add("show");
+const hide=id=>$(id).classList.remove("show");
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>hide(b.dataset.close));
+
+function bytes(n){if(!n&&n!==0)return "";const u=["B","KB","MB","GB"],i=Math.floor(Math.log(Math.max(n,1))/Math.log(1024));return (n/1024**i).toFixed(i?1:0)+" "+u[i]}
+function render(){
+ const area=$("fileArea");
+ if(!current){area.innerHTML='<div class="empty">Hiện chưa có tệp nào.</div>'; $("adminFileName").textContent="Chưa có tệp.";return}
+ area.innerHTML=`<div class="file-icon">📄</div><div class="name">${escapeHtml(current.name)}</div><div class="size">${bytes(current.size)}</div><a class="download" href="${current.url}" download="${escapeHtml(current.name)}">⬇ Tải xuống</a>`;
+ $("adminFileName").textContent=current.name;
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+async function loadFile(){
+ try{const snap=await getDoc(fileDoc);current=snap.exists()?snap.data():null;render()}
+ catch(e){$("fileArea").innerHTML='<div class="empty">Không tải được dữ liệu. Kiểm tra Firebase và Rules.</div>';console.error(e)}
+}
+
+$("ownerBtn").onclick=()=> auth.currentUser ? show("adminModal") : show("loginModal");
+
+$("loginBtn").onclick=async()=>{
+ $("loginStatus").textContent="Đang đăng nhập...";
+ try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);$("loginStatus").textContent="Đăng nhập thành công.";hide("loginModal");show("adminModal")}
+ catch(e){$("loginStatus").textContent="Không đăng nhập được: "+e.message}
+};
+
+onAuthStateChanged(auth,user=>{
+ $("ownerBtn").title=user?"Quản trị viên đã đăng nhập":"Đăng nhập chủ";
+});
+
+$("uploadBtn").onclick=async()=>{
+ const file=$("newFile").files[0];
+ if(!file)return $("adminStatus").textContent="Hãy chọn một tệp.";
+ $("adminStatus").textContent="Đang tải tệp lên...";
+ try{
+   if(current?.storagePath){try{await deleteObject(ref(storage,current.storagePath))}catch(e){}}
+   const path="shared/main_"+Date.now()+"_"+file.name.replace(/[^\w.\-]/g,"_");
+   const r=ref(storage,path);
+   await uploadBytes(r,file);
+   const url=await getDownloadURL(r);
+   current={name:file.name,size:file.size,url,storagePath:path,updatedAt:Date.now()};
+   await setDoc(fileDoc,current);
+   $("newFile").value="";$("adminStatus").textContent="Đã cập nhật tệp.";render();
+ }catch(e){$("adminStatus").textContent="Lỗi tải lên: "+e.message;console.error(e)}
+};
+
+$("deleteBtn").onclick=async()=>{
+ if(!current)return $("adminStatus").textContent="Không có tệp để xóa.";
+ if(!confirm("Bạn chắc chắn muốn xóa tệp này?"))return;
+ $("adminStatus").textContent="Đang xóa...";
+ try{
+   if(current.storagePath)await deleteObject(ref(storage,current.storagePath));
+   await deleteDoc(fileDoc);current=null;render();$("adminStatus").textContent="Đã xóa tệp.";
+ }catch(e){$("adminStatus").textContent="Lỗi xóa: "+e.message}
+};
+
+$("logoutBtn").onclick=async()=>{await signOut(auth);hide("adminModal")};
+loadFile();
+</script>
+</body>
+    </html>
